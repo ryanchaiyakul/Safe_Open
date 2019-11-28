@@ -2,8 +2,6 @@ import pathlib
 import logging
 import subprocess
 
-from . import constants
-
 
 class Backup():
 
