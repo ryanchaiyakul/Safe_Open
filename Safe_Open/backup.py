@@ -12,6 +12,7 @@ class Backup():
         if check_func is None:
             self._logger.warning("No check_function passed")
         self.check_func = check_func
+        self._stream = None
 
     def __enter__(self):
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -26,9 +27,15 @@ class Backup():
             self._temp = stream.read()
             self._logger.debug("current file status: {}".format(self._temp))
 
-        return self.path
+        self._stream = self.path.open('r+')
+        return self._stream
 
     def __exit__(self, exception_type, exception_value, traceback):
+        if self._stream is not None:
+            self._logger.error("self._stream was not set")
+            return self.revert()
+        self._stream.close()
+
         if exception_value is not None:
             self._logger.error("exception found : {} {}".format(
                 exception_type, exception_value))
